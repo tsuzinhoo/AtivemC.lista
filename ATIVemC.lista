@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100 
+
+typedef struct {
+    int itens[MAX];
+    int ultimo;
+} Lista;
+
+void criarLista(Lista *l) { l->ultimo = -1; }
+
+int inserirLista(Lista *l, int valor) {
+    if (l->ultimo == MAX - 1) return 0;
+    l->itens[++l->ultimo] = valor;
+    return 1;
+}
+
+int inserirOrdenadoLista(Lista *l, int valor) {
+    if (l->ultimo == MAX - 1) return 0;
+    int i = 0;
+    while (i <= l->ultimo && l->itens[i] < valor) i++;
+    for (int j = l->ultimo++; j >= i; j--) l->itens[j + 1] = l->itens[j];
+    l->itens[i] = valor;
+    return 1;
+}
+
+void exibirLista(Lista *l) {
+    if (l->ultimo == -1) printf("Lista vazia.\n");
+    else {
+        printf("Lista: ");
+        for (int i = 0; i <= l->ultimo; i++) printf("%d ", l->itens[i]);
+        printf("\n");
+    }
+}
+
+int buscarLista(Lista *l, int valor) {
+    for (int i = 0; i <= l->ultimo; i++)
+        if (l->itens[i] == valor) return i;
+    return -1;
+}
+
+int excluirLista(Lista *l, int valor) {
+    int pos = buscarLista(l, valor);
+    if (pos == -1) return 0;
+    for (int i = pos; i < l->ultimo; i++) l->itens[i] = l->itens[i + 1];
+    l->ultimo--;
+    return 1;
+}
+
+void liberarLista(Lista *l) { l->ultimo = -1; }
+
+int main() {
+    Lista l;
+    criarLista(&l);
+    inserirOrdenadoLista(&l, 20);
+    inserirOrdenadoLista(&l, 10);
+    inserirOrdenadoLista(&l, 30);
+    inserirOrdenadoLista(&l, 15);
+
+    exibirLista(&l);
+    printf("Lista %s está vazia.\n", l.ultimo == -1 ? "" : "não");
+
+    int valorBuscado = 20, indice = buscarLista(&l, valorBuscado);
+    printf("Valor %d %s encontrado.\n", valorBuscado, indice != -1 ? "foi" : "não foi");
+
+    excluirLista(&l, 20);
+    printf("Depois de remover 20:\n");
+    exibirLista(&l);
+
+    liberarLista(&l);
+    printf("Lista após liberar: ");
+    exibirLista(&l);
+
+    return 0;
+}
